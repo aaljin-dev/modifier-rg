@@ -25,7 +25,7 @@ const Modifier = () => {
         <div className="w-[50%] max-md:w-[100%] ">
           <Image image={show} />
         </div>
-        <div className="w-[50%] max-md:w-[100%] ">
+        <div className="w-[50%] max-md:w-[100%] px-10">
           <UserModifier order={show} />
         </div>
       </div>
