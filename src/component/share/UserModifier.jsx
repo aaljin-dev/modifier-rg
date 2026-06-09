@@ -20,35 +20,55 @@ const UserModifier = ({ order }) => {
 
             // Checkbox
             if (isCheckbox) {
-              return option.id === optionId
-                ? {
-                    ...option,
-                    checked: !option.checked,
-                    open: !option.open,
-                  }
-                : option;
+              if (option.id !== optionId) return option;
+
+              const checked = !option.checked;
+              const open = !option.open;
+
+              return {
+                ...option,
+                checked,
+                open,
+                quantity: !checked && !open ? 0 : option.quantity,
+                child: !checked
+                  ? option.child?.map((child) => ({
+                      ...child,
+                      checked: false,
+                      quantity: 0,
+                    }))
+                  : option.child,
+              };
             }
 
             // Radio
             return option.id === optionId
-              ? {
-                  ...option,
-                  checked: !option.checked,
-                  open: !option.open,
-                  child: option.checked
-                    ? option.child?.map((child) => ({
-                        ...child,
-                        checked: false,
-                      }))
-                    : option.child,
-                }
+              ? (() => {
+                  const checked = !option.checked;
+                  const open = !option.open;
+
+                  return {
+                    ...option,
+                    checked,
+                    open,
+                    quantity: !checked && !open ? 0 : option.quantity,
+                    child: !checked
+                      ? option.child?.map((child) => ({
+                          ...child,
+                          checked: false,
+                          quantity: 0,
+                        }))
+                      : option.child,
+                  };
+                })()
               : {
                   ...option,
                   checked: false,
                   open: false,
+                  quantity: 0,
                   child: option.child?.map((child) => ({
                     ...child,
                     checked: false,
+                    quantity: 0,
                   })),
                 };
           }),
@@ -58,6 +78,7 @@ const UserModifier = ({ order }) => {
 
     setProduct(updated);
   };
+
   const childButton = (childId, parentId, sectionId) => {
     const update = product.map((modifier) => {
       if (modifier.id !== sectionId) return modifier;
@@ -74,24 +95,30 @@ const UserModifier = ({ order }) => {
               child: option.child.map((child) => {
                 const isCheckbox = child.option_type == "0";
 
+                // Checkbox Child
                 if (isCheckbox) {
-                  return child.id === childId
-                    ? {
-                        ...child,
-                        checked: !child.checked,
-                      }
-                    : child;
+                  if (child.id !== childId) return child;
+
+                  const checked = !child.checked;
+
+                  return {
+                    ...child,
+                    checked,
+                    quantity: checked ? child.quantity || 1 : 0,
+                  };
                 }
 
-                // Radio => single select
+                // Radio Child
                 return child.id === childId
                   ? {
                       ...child,
                       checked: true,
+                      quantity: child.quantity || 1,
                     }
                   : {
                       ...child,
                       checked: false,
+                      quantity: 0,
                     };
               }),
             };
@@ -154,6 +181,50 @@ const UserModifier = ({ order }) => {
               }
             : parent,
         ),
+      },
+    }));
+
+    setProduct(updated);
+  };
+
+  const orderCountChildAdd = (id) => {
+    const updated = product.map((modifier) => ({
+      ...modifier,
+      modifierinfo: {
+        ...modifier.modifierinfo,
+        option: modifier.modifierinfo.option.map((parent) => ({
+          ...parent,
+          child: parent.child?.map((child) =>
+            child.id === id
+              ? {
+                  ...child,
+                  quantity: (child.quantity || 1) + 1,
+                }
+              : child,
+          ),
+        })),
+      },
+    }));
+
+    setProduct(updated);
+  };
+
+  const orderCountChildSub = (id) => {
+    const updated = product.map((modifier) => ({
+      ...modifier,
+      modifierinfo: {
+        ...modifier.modifierinfo,
+        option: modifier.modifierinfo.option.map((parent) => ({
+          ...parent,
+          child: parent.child?.map((child) =>
+            child.id === id
+              ? {
+                  ...child,
+                  quantity: Math.max(0, (child.quantity || 1) - 1),
+                }
+              : child,
+          ),
+        })),
       },
     }));
 
@@ -238,15 +309,25 @@ const UserModifier = ({ order }) => {
                                 {childOption.checked && (
                                   <div>
                                     <div className=" border border-amber-500 flex items-center">
-                                      <button className="bg-gray-600 px-2 h-full">
+                                      <button
+                                        className="bg-gray-600 px-2 h-full"
+                                        onClick={() =>
+                                          orderCountChildAdd(childOption.id)
+                                        }
+                                      >
                                         +
                                       </button>
 
                                       <span className="bg-gray-600 px-2 h-full flex items-center">
-                                        {orderOn}
+                                        {childOption.quantity || 1}
                                       </span>
 
-                                      <button className="bg-gray-600 px-2 h-full">
+                                      <button
+                                        className="bg-gray-600 px-2 h-full"
+                                        onClick={() =>
+                                          orderCountChildSub(childOption.id)
+                                        }
+                                      >
                                         -
                                       </button>
                                     </div>
