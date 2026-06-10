@@ -10,6 +10,11 @@ const Image = ({ image }) => {
     return <div>Loading...</div>;
   }
 
+  const slides =
+    image.attach_image.length <= 3
+      ? [...image.attach_image, ...image.attach_image, ...image.attach_image]
+      : image.attach_image;
+
   return (
     <div>
       <div className=" mb-5 h-80 w-full borderr">
@@ -17,6 +22,7 @@ const Image = ({ image }) => {
           className="w-full h-full "
           src={mainImage || image?.attach_image?.[0]?.attachurl}
           alt=""
+          // attach_image
         />
       </div>
       <div>
@@ -25,14 +31,15 @@ const Image = ({ image }) => {
           slidesPerView={3}
           spaceBetween={25}
           speed={2000}
-          loop={true}
+          loop={slides.length > 3}
+          loopAdditionalSlides={3}
           autoplay={{
             delay: 2000, // 3 seconds
             disableOnInteraction: false,
           }}
         >
-          {image.attach_image.map((item) => (
-            <SwiperSlide key={item.id}>
+          {slides.map((item, index) => (
+            <SwiperSlide key={`${item.id}-${index}`}>
               <div
                 className="h-30"
                 onClick={() => setMainImage(item.attachurl)}
