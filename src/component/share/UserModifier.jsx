@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
+import customLetter from "../CustomLetter";
+import CustomLetter from "../CustomLetter";
 
-const UserModifier = ({ order }) => {
+const UserModifier = ({ order, fullScreen, setFullScreen }) => {
   const [product, setProduct] = useState([]);
 
   const [showButton, setShowButton] = useState([]);
 
+  const [rate, setRate] = useState(0);
+
   // jhgvhvhvhv vgh vygvjgvj
 
-  const [orderOn, setOrderOn] = useState(1);
+  const [orderOn, setOrderOn] = useState(0);
 
   const buttonOpen = (optionId, modifierId) => {
     const updated = product.map((modifier) => {
@@ -138,7 +142,7 @@ const UserModifier = ({ order }) => {
     }
   }, [order]);
 
-  console.log("ful", product);
+  console.log("full", product);
 
   const openHandle = (id) => {
     console.log(id);
@@ -149,7 +153,6 @@ const UserModifier = ({ order }) => {
     setProduct(handleOpen);
   };
 
-  //order count start
   const orderCountAdd = (id) => {
     const updated = product.map((modifier) => ({
       ...modifier,
@@ -161,8 +164,7 @@ const UserModifier = ({ order }) => {
                 ...parent,
                 quantity: (parent.quantity || 1) + 1,
               }
-            : // next logic build here
-              parent,
+            : parent,
         ),
       },
     }));
@@ -232,82 +234,112 @@ const UserModifier = ({ order }) => {
 
     setProduct(updated);
   };
+  const calculatePrice = () => {
+    let total = order.price || 0;
+
+    product.forEach((modifier) => {
+      modifier.modifierinfo.option.forEach((option) => {
+        if (option.checked) {
+          total += (option.price || 0) * (option.quantity || 1);
+        }
+
+        option.child?.forEach((child) => {
+          if (child.checked) {
+            total += (child.price || 0) * (child.quantity || 1);
+          }
+        });
+      });
+    });
+
+    return total;
+  };
+
+  useEffect(() => {
+    setRate(calculatePrice());
+    console.log("Done");
+  }, [product]);
 
   if (!order?.modifier) return <div>Loading...</div>;
 
   return (
-    <div className="space-y-4 w-full">
-      {/* secation */}
-      {product.map((modifier) => (
-        <div key={modifier.id}>
-          <div
-            className="flex justify-between items-center p-4 cursor-pointer bg-gray-100"
-            onClick={() => {
-              openHandle(modifier.id);
-            }}
-          >
-            <h3>
-              {modifier.modifierinfo.mname}
-              {modifier.modifierinfo.isrequired === 1 && (
-                <span className="text-red-500 ml-1">(Required)</span>
-              )}
-            </h3>
-            <span>{modifier.open ? "-" : "+"}</span>
-          </div>
-          {
-            <div className="p-4">
-              {/* parent */}
-              {modifier.open &&
-                modifier.modifierinfo.option?.map((option) => (
-                  <div key={option.id} className="flex justify-between py-2">
-                    <div>
-                      <div>
+    <div className="">
+      <div className="py-4 w-full">
+        {/* secation */}
+        {product.map((modifier) => (
+          <div key={modifier.id}>
+            <div
+              className="flex justify-between items-center p-4 cursor-pointer bg-gray-100"
+              onClick={() => {
+                openHandle(modifier.id);
+              }}
+            >
+              <h3>
+                {modifier.modifierinfo.mname}
+                {modifier.modifierinfo.isrequired === 1 && (
+                  <span className="text-red-500 ml-1">(Required)</span>
+                )}
+              </h3>
+              <span>{modifier.open ? "-" : "+"}</span>
+            </div>
+            {
+              <div className="p-4">
+                {/* parent */}
+                {modifier.open &&
+                  modifier.modifierinfo.option?.map((option) => (
+                    <div key={option.id} className="flex justify-between py-2 ">
+                      <div className=" w-full">
                         <div>
-                          <input
-                            type={
-                              option.isprice == 1 && option.option_type == 1
-                                ? "checkbox"
-                                : "radio"
-                            }
-                            name={option.modifier_id}
-                            disabled={option.qoh === 0}
-                            checked={option.checked || false}
-                            readOnly
-                            onClick={(e) => {
-                              buttonOpen(option.id, modifier.id);
-                              console.log(option.qoh);
-                            }}
-                          />
-                          <span className="ml-2">{option.optionname}</span>
+                          <div>
+                            <input
+                              type={
+                                option.isprice == 1 && option.option_type == 1
+                                  ? "checkbox"
+                                  : "radio"
+                              }
+                              name={option.modifier_id}
+                              disabled={option.qoh === 0}
+                              checked={option.checked || false}
+                              readOnly
+                              onClick={(e) => {
+                                buttonOpen(option.id, modifier.id);
+                                console.log(option.qoh);
+                              }}
+                            />
+                            <span className="ml-2">{option.optionname}</span>
+                          </div>
                         </div>
-                      </div>
-                      {/* child */}
-                      {option.open &&
-                        option.checked &&
-                        option.child?.map((childOption) => (
-                          <div className="w-[400px] flex justify-between py-2">
-                            <div key={childOption.id} className="flex">
-                              <input
-                                type={
-                                  childOption.option_type == 0
-                                    ? "checkbox"
-                                    : "radio"
-                                }
-                                name={childOption.modifier_id}
-                                checked={childOption.checked || false}
-                                readOnly
-                                onClick={() =>
-                                  childButton(
-                                    childOption.id,
-                                    option.id,
-                                    modifier.id,
-                                  )
-                                }
-                              />
-                              <div>{childOption.optionname}</div>
-                            </div>
-                            <div>
+                        {/* child */}
+                        {option.open &&
+                          option.checked &&
+                          option.child?.map((childOption) => (
+                            <div className="w-full flex justify-between py-2">
+                              <div
+                                key={childOption.id}
+                                className="flex justify-baseline"
+                              >
+                                <input
+                                  type={
+                                    childOption.option_type == 0
+                                      ? "checkbox"
+                                      : "radio"
+                                  }
+                                  name={childOption.modifier_id}
+                                  checked={childOption.checked || false}
+                                  readOnly
+                                  onClick={() =>
+                                    childButton(
+                                      childOption.id,
+                                      option.id,
+                                      modifier.id,
+                                    )
+                                  }
+                                />
+                                <div>{childOption.optionname}</div>
+                              </div>
+
                               <div>
+                                {/* look */}
+                                <span>{`${childOption.price} QAR`}</span>
                                 {childOption.checked && (
                                   <div>
                                     <div className=" border border-amber-500 flex items-center">
@@ -337,63 +369,88 @@ const UserModifier = ({ order }) => {
                                 )}
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
 
-                      {option.qoh == 0 && (
-                        <p className="text-red-500 text-sm">out of stock</p>
+                        {option.qoh == 0 && (
+                          <p className="text-red-500 text-sm">out of stock</p>
+                        )}
+                      </div>
+
+                      {/* price Show and button*/}
+                      {!option.child?.[0] && option.open && (
+                        <div>
+                          <span>{option.price} QAR</span>
+                          {
+                            <div>
+                              <div className=" border border-amber-500 flex items-center">
+                                <button
+                                  className="bg-gray-600 px-2 h-full"
+                                  onClick={() => orderCountAdd(option.id)}
+                                >
+                                  +
+                                </button>
+
+                                <span className="bg-gray-600 px-2 h-full flex items-center">
+                                  {option.quantity || 1}
+                                </span>
+
+                                <button
+                                  className="bg-gray-600 px-2 h-full"
+                                  onClick={() => orderCountSub(option.id)}
+                                >
+                                  -
+                                </button>
+                              </div>
+                            </div>
+                          }
+                        </div>
                       )}
                     </div>
+                  ))}
+              </div>
+            }
+          </div>
+        ))}
+        <div>
+          <div className="  border border-amber-500 flex items-center text-white text-xl">
+            <h1 className="text-black px-5">Quantity</h1>
+            <button
+              className="bg-gray-600 px-5 py-2 h-full"
+              onClick={() =>
+                setOrderOn((prev) => Math.min(prev + 1, order.qoh))
+              }
+            >
+              +
+            </button>
 
-                    {/* price Show and button*/}
-                    {!option.child?.[0] && option.open && (
-                      <div>
-                        <span>{option.price} QAR</span>
-                        {
-                          <div>
-                            <div className=" border border-amber-500 flex items-center">
-                              <button
-                                className="bg-gray-600 px-2 h-full"
-                                onClick={() => orderCountAdd(option.id)}
-                              >
-                                +
-                              </button>
+            <span className="bg-gray-600 px-4 py-2 h-full flex items-center">
+              {orderOn}
+            </span>
 
-                              <span className="bg-gray-600 px-2 h-full flex items-center">
-                                {option.quantity || 1}
-                              </span>
+            <button
+              className="bg-gray-600 px-5 py-2 h-full"
+              onClick={() => setOrderOn(Math.max(0, (orderOn || 1) - 1))}
+            >
+              -
+            </button>
+          </div>
 
-                              <button
-                                className="bg-gray-600 px-2 h-full"
-                                onClick={() => orderCountSub(option.id)}
-                              >
-                                -
-                              </button>
-                            </div>
-                          </div>
-                        }
-                      </div>
-                    )}
-                  </div>
-                ))}
-            </div>
-          }
+          <span className="text-red-500 text-md">{`Only ${order?.qoh} left in stock.`}</span>
+
+          {orderOn >= order.qoh && (
+            <p className="text-orange-500 text-sm mt-1">out of stock</p>
+          )}
         </div>
-      ))}
-      <div>
-        <div className="  border border-amber-500 flex items-center text-white text-xl">
-          <h1 className="text-black px-5">Quantity</h1>
-          <button className="bg-gray-600 px-5 py-2 h-full">+</button>
-
-          <span className="bg-gray-600 px-4 py-2 h-full flex items-center">
-            1
-          </span>
-
-          <button className="bg-gray-600 px-5 py-2 h-full">-</button>
-        </div>
-
-        <span className="text-red-500 text-md">{`Only ${order?.qoh} left in stock.`}</span>
       </div>
+
+      <div>
+        <CustomLetter fullScreen={fullScreen} setFullScreen={setFullScreen} />
+      </div>
+
+      <div className="mt-5">
+        <button className="bg-gray-600 py-2 px-5 text-white">{rate}</button>
+      </div>
+      {fullScreen && <div className="absolute inset-0 bg-amber-50">piooj</div>}
     </div>
   );
 };
