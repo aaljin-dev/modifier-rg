@@ -31,8 +31,8 @@ const Image = ({ image, fullScreen, setFullScreen }) => {
           slidesPerView={3}
           spaceBetween={25}
           speed={2000}
-          loop={slides.length > 3}
-          loopAdditionalSlides={3}
+          loop={true}
+          // loopAdditionalSlides={3}
           autoplay={{
             delay: 2000, // 3 seconds
             disableOnInteraction: false,
