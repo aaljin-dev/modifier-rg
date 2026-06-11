@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 
-const Image = ({ image }) => {
+const Image = ({ image, fullScreen, setFullScreen }) => {
   const [mainImage, setMainImage] = useState("");
 
   if (!image?.attach_image) {

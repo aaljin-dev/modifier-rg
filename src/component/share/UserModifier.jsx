@@ -450,7 +450,6 @@ const UserModifier = ({ order, fullScreen, setFullScreen }) => {
       <div className="mt-5">
         <button className="bg-gray-600 py-2 px-5 text-white">{rate}</button>
       </div>
-      {fullScreen && <div className="absolute inset-0 bg-amber-50">piooj</div>}
     </div>
   );
 };

@@ -33,6 +33,19 @@ const CustomLetter = ({ setFullScreen, fullScreen }) => {
           <div className="border-2 mt-5 h-15"></div>
         </div>
       </div>
+      {/* {fullScreen && (
+        <div className="fixed inset-0 z-50 bg-[#F7F0F0]">
+          <button
+            onClick={() => setFullScreen(false)}
+            className="absolute top-4 right-4 text-xl"
+          >
+            x
+          </button>
+          <div>
+            <div className="absolute top-10 left-200"> </div>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 };
