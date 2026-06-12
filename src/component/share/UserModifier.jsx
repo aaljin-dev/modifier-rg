@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import customLetter from "../CustomLetter";
 import CustomLetter from "../CustomLetter";
 
-const UserModifier = ({ order, fullScreen, setFullScreen }) => {
+const UserModifier = ({ order, fullScreen, setFullScreen, userInput }) => {
   const [product, setProduct] = useState([]);
 
   const [showButton, setShowButton] = useState([]);
@@ -444,7 +444,11 @@ const UserModifier = ({ order, fullScreen, setFullScreen }) => {
       </div>
 
       <div>
-        <CustomLetter fullScreen={fullScreen} setFullScreen={setFullScreen} />
+        <CustomLetter
+          userInput={userInput}
+          fullScreen={fullScreen}
+          setFullScreen={setFullScreen}
+        />
       </div>
 
       <div className="mt-5">

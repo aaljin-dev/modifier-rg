@@ -2,20 +2,9 @@ import React from "react";
 import { useState } from "react";
 
 const Letter = ({ text, setSuggestion, suggestion }) => {
-  const sigCanvas = useRef();
-
-  const clear = () => {
-    sigCanvas.current.clear();
-  };
-
-  const save = () => {
-    const signature = sigCanvas.current.toDataURL("image/png");
-    console.log(signature);
-  };
-
   return (
     <div>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="fixed inset-0 z-200 flex items-center justify-center bg-black/50">
         <div className="w-[50%] h-[80%] bg-white border rounded-lg">
           <div className="border-b flex justify-between px-5 py-5">
             <h1 className="text-xl font-bold">Try Suggested Message</h1>
