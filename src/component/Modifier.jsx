@@ -109,10 +109,38 @@ const Modifier = () => {
 
                   <div className="w-1/2 max-md:w-full h-screen overflow-y-auto scrollbar-hide pt-3 bg-white relative">
                     {previewPage ? (
-                      <div className="bg-red-500 w-full">
-                        <div>fsdfdsd</div>
-                        <div>
-                          <h1 onClick={() => setPreviewPage(false)}>X</h1>
+                      <div className="bg-white w-full">
+                        <div className="flex justify-end mr-10 mt-5">
+                          <h1
+                            className="text-2xl font-bold"
+                            onClick={() => setPreviewPage(false)}
+                          >
+                            X
+                          </h1>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-lg">{userInput.message}</p>
+                          <p className="text-xl font-bold mt-5">
+                            {userInput.senderName}
+                          </p>
+                          <div className="flex justify-center mt-5">
+                            {userInput.sign && (
+                              <img
+                                src={userInput.sign}
+                                alt="Signature"
+                                className="w-40 h-20 object-cover"
+                              />
+                            )}
+                          </div>
+                          {userInput.image && (
+                            <div className="flex justify-center mt-5">
+                              <img
+                                src={URL.createObjectURL(userInput.image)}
+                                alt="Uploaded"
+                                className="w-40 h-40 object-cover rounded"
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                     ) : (
