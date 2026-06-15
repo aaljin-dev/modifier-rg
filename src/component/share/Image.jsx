@@ -17,7 +17,7 @@ const Image = ({ image, fullScreen, setFullScreen }) => {
 
   return (
     <div>
-      <div className=" mb-5 h-80 w-full borderr">
+      <div className=" mb-5 h-80 w-full ">
         <img
           className="w-full h-full "
           src={mainImage || image?.attach_image?.[0]?.attachurl}

@@ -78,7 +78,7 @@ const Modifier = () => {
 
   return (
     <>
-      <div className="w-[100%] max-md:flex-col flex px-10 max-md:px-5 pt-10 borderr ">
+      <div className="w-[100%] max-md:flex-col flex px-10 max-md:px-5 pt-10  ">
         <div className="w-[50%] max-md:w-[100%] ">
           <Image
             image={show}
@@ -112,7 +112,7 @@ const Modifier = () => {
                       <div className="bg-white w-full">
                         <div className="flex justify-end mr-10 mt-5">
                           <h1
-                            className="text-2xl font-bold"
+                            className="text-2xl font-bold cursor-pointer"
                             onClick={() => setPreviewPage(false)}
                           >
                             X
@@ -397,6 +397,9 @@ const Modifier = () => {
         </div>
         {suggestion && (
           <Letter
+            userInput={userInput}
+            userInput={userInput}
+            setUserInput={setUserInput}
             text={text}
             suggestion={suggestion}
             setSuggestion={setSuggestion}

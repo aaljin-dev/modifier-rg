@@ -1,7 +1,13 @@
 import React from "react";
 import { useState } from "react";
 
-const Letter = ({ text, setSuggestion, suggestion }) => {
+const Letter = ({
+  userInput,
+  setUserInput,
+  text,
+  setSuggestion,
+  suggestion,
+}) => {
   return (
     <div>
       <div className="fixed inset-0 z-200 flex items-center justify-center bg-black/50">
@@ -25,8 +31,14 @@ const Letter = ({ text, setSuggestion, suggestion }) => {
             <div>
               {text.map((item, index) => (
                 <p
-                  className="border my-2 p-2  w-fit cursor-pointer"
+                  className={`border my-2 p-2  w-fit cursor-pointer ${userInput.message === item ? "bg-black text-white" : ""}`}
                   key={index}
+                  onClick={() =>
+                    setUserInput({
+                      ...userInput,
+                      message: item,
+                    })
+                  }
                 >
                   {item}
                 </p>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import customLetter from "../CustomLetter";
 import CustomLetter from "../CustomLetter";
+import { GrRefresh } from "react-icons/gr";
 
 const UserModifier = ({ order, fullScreen, setFullScreen, userInput }) => {
   const [product, setProduct] = useState([]);
@@ -11,7 +12,7 @@ const UserModifier = ({ order, fullScreen, setFullScreen, userInput }) => {
 
   // jhgvhvhvhv vgh vygvjgvj
 
-  const [orderOn, setOrderOn] = useState(0);
+  const [orderOn, setOrderOn] = useState(1);
 
   const buttonOpen = (optionId, modifierId) => {
     const updated = product.map((modifier) => {
@@ -137,6 +138,11 @@ const UserModifier = ({ order, fullScreen, setFullScreen, userInput }) => {
   };
 
   useEffect(() => {
+    setRate(calculatePrice());
+    console.log("Done");
+  }, [product]);
+
+  useEffect(() => {
     if (order?.modifier) {
       setProduct(order.modifier);
     }
@@ -235,7 +241,7 @@ const UserModifier = ({ order, fullScreen, setFullScreen, userInput }) => {
     setProduct(updated);
   };
   const calculatePrice = () => {
-    let total = order.price || 0;
+    let total = Number(order.saleprice || 0);
 
     product.forEach((modifier) => {
       modifier.modifierinfo.option.forEach((option) => {
@@ -254,18 +260,13 @@ const UserModifier = ({ order, fullScreen, setFullScreen, userInput }) => {
     return total;
   };
 
-  useEffect(() => {
-    setRate(calculatePrice());
-    console.log("Done");
-  }, [product]);
-
   if (!order?.modifier) return <div>Loading...</div>;
 
   return (
     <div className="">
       <div className="py-4 w-full">
         {/* secation */}
-        {product.map((modifier) => (
+        {product?.map((modifier) => (
           <div key={modifier.id}>
             <div
               className="flex justify-between items-center p-4 cursor-pointer bg-gray-100"
@@ -342,7 +343,7 @@ const UserModifier = ({ order, fullScreen, setFullScreen, userInput }) => {
                                 <span>{`${childOption.price} QAR`}</span>
                                 {childOption.checked && (
                                   <div>
-                                    <div className=" border border-amber-500 flex items-center">
+                                    <div className=" flex items-center">
                                       <button
                                         className="bg-gray-600 px-2 h-full"
                                         onClick={() =>
@@ -382,7 +383,7 @@ const UserModifier = ({ order, fullScreen, setFullScreen, userInput }) => {
                           <span>{option.price} QAR</span>
                           {
                             <div>
-                              <div className=" border border-amber-500 flex items-center">
+                              <div className=" flex items-center">
                                 <button
                                   className="bg-gray-600 px-2 h-full"
                                   onClick={() => orderCountAdd(option.id)}
@@ -412,27 +413,38 @@ const UserModifier = ({ order, fullScreen, setFullScreen, userInput }) => {
           </div>
         ))}
         <div>
-          <div className="  border border-amber-500 flex items-center text-white text-xl">
-            <h1 className="text-black px-5">Quantity</h1>
-            <button
-              className="bg-gray-600 px-5 py-2 h-full"
-              onClick={() =>
-                setOrderOn((prev) => Math.min(prev + 1, order.qoh))
-              }
-            >
-              +
-            </button>
+          <div className="flex justify-between">
+            <div className=" flex items-center text-white text-xl">
+              <h1 className="text-black px-5">Quantity</h1>
+              <button
+                className="bg-black px-2 py-1 h-full"
+                onClick={() =>
+                  setOrderOn((prev) => Math.min(prev + 1, order.qoh))
+                }
+              >
+                +
+              </button>
 
-            <span className="bg-gray-600 px-4 py-2 h-full flex items-center">
-              {orderOn}
-            </span>
+              <span className="bg-black px-2 py-1 h-full flex items-center">
+                {orderOn}
+              </span>
 
-            <button
-              className="bg-gray-600 px-5 py-2 h-full"
-              onClick={() => setOrderOn(Math.max(0, (orderOn || 1) - 1))}
-            >
-              -
-            </button>
+              <button
+                className="bg-black px-2 py-1 h-full"
+                onClick={() => setOrderOn(Math.max(0, (orderOn || 1) - 1))}
+              >
+                -
+              </button>
+            </div>
+            <div>
+              <div
+                className="border border-gray-400 rounded-2xl py-1 p-2 flex items-center gap-2 cursor-pointer hover:bg-gray-300"
+                onClick={() => setProduct(order.modifier)}
+              >
+                <GrRefresh />
+                <span className="text-gray-400">Reset Selection</span>
+              </div>
+            </div>
           </div>
 
           <span className="text-red-500 text-md">{`Only ${order?.qoh} left in stock.`}</span>
@@ -451,8 +463,8 @@ const UserModifier = ({ order, fullScreen, setFullScreen, userInput }) => {
         />
       </div>
 
-      <div className="mt-5">
-        <button className="bg-gray-600 py-2 px-5 text-white">{rate}</button>
+      <div className="">
+        <button className="bg-gray-600 py-2 px-5 text-white ">{rate}</button>
       </div>
     </div>
   );

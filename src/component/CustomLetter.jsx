@@ -5,23 +5,29 @@ const CustomLetter = ({ setFullScreen, fullScreen, userInput }) => {
   const customInputFunction = () => {
     setFullScreen(true);
   };
+  const hasData =
+    userInput?.receiverName?.trim() ||
+    userInput?.message?.trim() ||
+    userInput?.senderName?.trim() ||
+    userInput?.sign ||
+    userInput?.image;
   return (
     <div>
       <div>
         <div>
-          <div className=" h-20 my-5">
-            <input
-              type="text"
-              className="border-2 w-full h-full"
-              placeholder="comment"
+          <div className="border border-gray-300 rounded-2xl p-3 my-5 shadow-sm  focus-within:bg-black focus-within:text-white">
+            <textarea
+              className="w-full outline-none resize-none"
+              rows="4"
+              placeholder="Enter your comment..."
             />
           </div>
 
-          <div className="border border-gray-400 rounded-2xl h-70 p-4">
+          <div className="border border-gray-300 rounded-2xl h-50 p-4 shadow-sm">
             <h1 className="text-xl font-bold">Card Message</h1>
 
-            {Object.keys(userInput || {}).length > 0 ? (
-              <div className="border-2  rounded-lg h-[80%] p-4 relative">
+            {hasData ? (
+              <div className="border-2  rounded-lg h-[80%] my-2 p-4 relative">
                 <h1
                   onClick={customInputFunction}
                   className="flex justify-end text-red-500"
@@ -47,7 +53,7 @@ const CustomLetter = ({ setFullScreen, fullScreen, userInput }) => {
             ) : (
               <>
                 <div
-                  className="border border-gray-500 border-dashed rounded-lg h-[80%] flex flex-col items-center justify-center"
+                  className="border  border-gray-300 border-dashed my-3 rounded-lg h-[60%] flex flex-col items-center justify-center"
                   onClick={customInputFunction}
                 >
                   <img
@@ -60,7 +66,7 @@ const CustomLetter = ({ setFullScreen, fullScreen, userInput }) => {
                   </p>
                 </div>
 
-                <h2 className="text-center cursor-pointer">
+                <h2 className="text-center cursor-pointer font-bold">
                   + Add Your Message
                 </h2>
               </>
